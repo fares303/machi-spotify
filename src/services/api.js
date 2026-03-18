@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const B = '/api'   // backend base
+const B = import.meta.env.VITE_API_URL || 'https://backend-ewosnu6wx-fares303s-projects.vercel.app/api'
 
 // ── Session caches ─────────────────────────────────────────────────────────────
 const streamCache  = new Map()

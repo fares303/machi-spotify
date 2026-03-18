@@ -12,8 +12,8 @@ command -v node &>/dev/null || { echo "Node.js required: https://nodejs.org"; ex
 [ -d "backend/node_modules" ] || (cd backend && npm install)
 
 echo -e "${GREEN}Starting...${NC}"
-echo -e "  Frontend → ${CYAN}http://localhost:5173${NC}"
-echo -e "  Backend  → ${CYAN}http://localhost:3001${NC}"
+echo -e "  Frontend → ${CYAN}https://machi-spotify.vercel.app/${NC}"
+echo -e "  Backend  → ${CYAN}https://backend-ewosnu6wx-fares303s-projects.vercel.app/${NC}"
 echo ""
 
 (cd backend && node server.js) &
