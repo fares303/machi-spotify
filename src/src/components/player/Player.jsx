@@ -10,7 +10,7 @@ import { downloadTrack } from '../../services/api'
 import { fmt } from '../../utils/helpers'
 import Visualizer from '../Visualizer/Visualizer'
 import LyricsPanel from '../Lyrics/LyricsPanel'
-import Equalizer from '../Equalizer/Equalizer'
+import Equalizer from '../equalizer/Equalizer'
 
 export default function Player({ seek, getAnalyserData, onInteract }) {
   const {
