@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { searchYouTube, normalizeYT } from '../services/api'
 import { useStore } from '../store'
-import TrackCard from '../components/ui/TrackCard'
+import TrackCard from '../components/UI/TrackCard'
 
 const MOODS = [
   {label:'Happy',emoji:'😄',q:'happy upbeat pop 2024',color:'#FBBF24'},

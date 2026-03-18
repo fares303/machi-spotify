@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { HiSearch, HiX } from 'react-icons/hi'
 import { searchYouTube } from '../services/api'
 import { useStore } from '../store'
-import TrackCard from '../components/ui/TrackCard'
+import TrackCard from '../components/UI/TrackCard'
 import { debounce } from '../utils/helpers'
 
 const CATS = [
