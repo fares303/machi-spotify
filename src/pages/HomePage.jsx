@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { searchAll } from '../services/api'
 import { useStore } from '../store'
-import TrackCard from '../components/ui/TrackCard'
+import TrackCard from '../components/UI/TrackCard'
 
 // 🇩🇿 Algeria-focused trending queries — Arabic/Algerian/North African music
 // Absolutely no Bollywood/Indian suggestions

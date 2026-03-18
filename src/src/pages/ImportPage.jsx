@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { HiLink, HiDownload, HiPlay, HiCheck } from 'react-icons/hi'
 import { importFromUrl } from '../services/api'
 import { useStore } from '../store'
-import TrackCard from '../components/ui/TrackCard'
+import TrackCard from '../components/UI/TrackCard'
 import toast from 'react-hot-toast'
 
 const EXAMPLES = [
