@@ -5,7 +5,7 @@ import { HiSearch, HiX, HiPlay, HiUserGroup } from 'react-icons/hi'
 import { MdAlbum } from 'react-icons/md'
 import { searchAll, deezerSearch, normalizeDeezer } from '../services/api'
 import { useStore } from '../store'
-import TrackCard from '../components/UI/TrackCard'
+import TrackCard from '../components/ui/TrackCard'
 
 const CATS = [
   {label:'Rai Algérien',  color:'#F43F5E', emoji:'🎵'},

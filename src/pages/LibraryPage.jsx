@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HiHeart, HiClock, HiCollection, HiPlus, HiTrash, HiUserGroup, HiMusicNote } from 'react-icons/hi'
 import { useStore } from '../store'
-import TrackCard from '../components/UI/TrackCard'
+import TrackCard from '../components/ui/TrackCard'
 
 const TABS = [
   {id:'playlists',label:'Playlists',icon:HiCollection},

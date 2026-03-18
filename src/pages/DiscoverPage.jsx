@@ -4,7 +4,7 @@ import { HiPlay } from 'react-icons/hi'
 import { useQuery } from '@tanstack/react-query'
 import { searchAll } from '../services/api'
 import { useStore } from '../store'
-import TrackCard from '../components/UI/TrackCard'
+import TrackCard from '../components/ui/TrackCard'
 
 const GENRES = ['Pop','Rock','Hip Hop','Electronic','R&B','Jazz','Classical','Metal','Reggae','Country','Afrobeats','K-Pop','Bollywood','Lo-fi','Workout']
 

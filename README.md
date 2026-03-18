@@ -1,75 +1,101 @@
-# 🎵 Machi Spotify
+# 🎵 Machi Spotify 🇩🇿
 
-A full-featured music streaming app — stream, search, download, and enjoy lyrics. No music stored on your server. Everything streams from JioSaavn and YouTube.
+Stream Algerian & Arabic music — one server, one port, deploy anywhere.
 
 ---
 
 ## 🚀 Quick Start
 
-### Requirements
-- **Node.js 18+** — download from https://nodejs.org
-
-### Run (one command)
+### Option A — One command (recommended)
 ```bash
-chmod +x run.sh && ./run.sh
+./run.sh
+```
+Choose **1** for production or **2** for development.
+
+---
+
+### Option B — Manual
+
+**Production** (one server on port 3000):
+```bash
+npm install          # install everything
+npm run build        # build React → dist/
+npm start            # serve at http://localhost:3000
 ```
 
-Or manually:
-
+**Development** (live reload):
 ```bash
-# Terminal 1 — Backend (REQUIRED for streaming)
-cd backend
 npm install
-node server.js
-# Runs at http://localhost:3001
-
-# Terminal 2 — Frontend
-npm install
-npm run dev
-# Opens at http://localhost:5173
+npm run dev          # Vite on :5173 + API on :3000
 ```
 
 ---
 
-## ✅ How Songs Play
+## 🌐 Deploy to a Server (VPS / Cloud)
 
-1. You click a track
-2. Frontend asks **backend `/api/stream?title=...&artist=...`**
-3. Backend searches **JioSaavn** (full quality, free, no restrictions) across 4 mirrors
-4. If JioSaavn fails → searches **YouTube** via yt-search + **Invidious** (public YouTube proxy)
-5. Stream URL returned to browser → plays full song
+1. Copy the project folder to your server
+2. Install Node.js 18+ on the server
+3. Run:
+```bash
+npm install
+npm run build
+npm start
+```
+4. Access at `http://YOUR_SERVER_IP:3000`
 
-**JioSaavn tracks** show a **FULL** badge — these have the stream URL pre-loaded from search.  
-**Other tracks** resolve on play — you'll see a "Loading..." toast for 2-5 seconds.
+**With a domain + SSL (using Nginx):**
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+**Keep running with PM2:**
+```bash
+npm install -g pm2
+pm2 start server.js --name "machi-spotify"
+pm2 save
+pm2 startup
+```
 
 ---
 
-## 🔑 Optional API Keys
-
-Add to `backend/.env` for better results:
+## 🔑 Optional API Keys (add to .env)
 
 ```env
-YOUTUBE_API_KEY=your_key   # https://console.cloud.google.com (free 10k/day)
-MUSIXMATCH_API_KEY=your_key  # https://developer.musixmatch.com (free tier)
+PORT=3000
+YOUTUBE_API_KEY=       # https://console.cloud.google.com
+MUSIXMATCH_API_KEY=    # https://developer.musixmatch.com
+GENIUS_API_TOKEN=      # https://genius.com/api-clients
 ```
-
-The app works without any keys.
+App works without any keys — keys just improve quality.
 
 ---
 
-## 🎵 Features
+## 📁 Project Structure
 
-- 🔍 Search songs, artists, albums (JioSaavn + YouTube)
-- ▶️ Full song streaming (not 30-second previews)
-- ⬇️ Download MP3/M4A
-- 🎤 Lyrics (LRCLib + Lyrics.ovh, no key needed)
-- 📋 Playlists + Library
-- 🎨 5 themes: Dark, Light, AMOLED, Ocean, Rose
-- 🎛️ 10-band Equalizer
-- ⌨️ Keyboard shortcuts (Space, arrows, M, S, R)
-- 📥 Import YouTube playlists by URL
-- 💤 Sleep timer
-- 🔁 Shuffle, Repeat, Queue management
+```
+machi-spotify/
+├── server.js          ← Express server (API + serves React)
+├── package.json       ← All dependencies (frontend + backend)
+├── vite.config.js     ← React build config
+├── src/               ← React frontend source
+├── dist/              ← Built frontend (created by npm run build)
+├── backend/
+│   └── routes/        ← API route handlers
+│       ├── stream.js  ← JioSaavn + Invidious stream resolver
+│       ├── search.js  ← Song search (JioSaavn + YouTube)
+│       ├── chart.js   ← Deezer trending chart
+│       ├── lyrics.js  ← Lyrics (LRCLib + lyrics.ovh)
+│       └── download.js← Audio download
+└── .env               ← API keys (optional)
+```
 
 ---
 
@@ -78,24 +104,9 @@ The app works without any keys.
 | Key | Action |
 |-----|--------|
 | `Space` | Play / Pause |
-| `→` / `←` | Seek +10s / -10s |
-| `Shift+→` / `Shift+←` | Next / Prev track |
-| `↑` / `↓` | Volume up / down |
-| `M` | Mute toggle |
+| `→` / `←` | +10s / -10s |
+| `Shift+→/←` | Next / Prev |
+| `↑` / `↓` | Volume |
+| `M` | Mute |
 | `S` | Shuffle |
-| `R` | Repeat cycle |
-
----
-
-## 🏗️ Tech Stack
-
-| Layer | Tech |
-|-------|------|
-| Frontend | React 18 + Vite + TailwindCSS |
-| Animations | Framer Motion |
-| State | Zustand (persisted) |
-| Audio | Web Audio API |
-| Backend | Node.js + Express |
-| Music source | JioSaavn API (full songs) |
-| YT fallback | yt-search + Invidious public mirrors |
-| Lyrics | LRCLib + Lyrics.ovh |
+| `R` | Repeat |

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { HiArrowLeft, HiPlay, HiTrash, HiShare } from 'react-icons/hi'
 import { MdShuffle } from 'react-icons/md'
 import { useStore } from '../store'
-import TrackCard from '../components/UI/TrackCard'
+import TrackCard from '../components/ui/TrackCard'
 import { fmt } from '../utils/helpers'
 import toast from 'react-hot-toast'
 

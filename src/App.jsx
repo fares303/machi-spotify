@@ -1,13 +1,13 @@
 import React from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import { useAudioPlayer } from './hooks/useAudioPlayer'
 import { useKeyboard } from './hooks/useKeyboard'
 import { useStore } from './store'
-import Sidebar from './components/UI/Sidebar'
-import BottomNav from './components/UI/BottomNav'
-import TopBar from './components/UI/TopBar'
-import Player from './components/Player/Player'
+import Sidebar from './components/ui/Sidebar'
+import BottomNav from './components/ui/BottomNav'
+import TopBar from './components/ui/TopBar'
+import Player from './components/player/Player'
 import HomePage from './pages/HomePage'
 import SearchPage from './pages/SearchPage'
 import LibraryPage from './pages/LibraryPage'
@@ -87,98 +87,83 @@ function MobilePlayer({ seek, onInteract }) {
   const pct = duration > 0 ? (progress / duration) * 100 : 0
   const isFav = isFavorite(currentTrack?.id)
 
-  const handleSeek = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    seek(((e.clientX - rect.left) / rect.width) * duration)
-  }
-
   if (!currentTrack) return null
 
-  return (
-    <motion.div
-      initial={{ y: 80 }} animate={{ y: 0 }}
-      transition={{ type: 'spring', damping: 22, stiffness: 260 }}
-      className="w-full"
-      style={{ background: 'var(--color-surface-2)', borderTop: '1px solid var(--glass-border)' }}>
+  const handleSeekTouch = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = (e.touches?.[0]?.clientX ?? e.clientX) - rect.left
+    seek((x / rect.width) * duration)
+  }
 
-      {/* Progress bar — full width tap to seek */}
-      <div className="h-1 w-full cursor-pointer" style={{ background: 'var(--glass-bg)' }} onClick={handleSeek}>
-        <div className="h-full transition-none" style={{ width: `${pct}%`, background: 'var(--color-primary)' }} />
+  return (
+    <div style={{ background: 'var(--color-surface-2)', borderTop: '1px solid var(--glass-border)' }}>
+      {/* Seekable progress strip */}
+      <div
+        style={{ height: 3, background: 'var(--glass-bg)', cursor: 'pointer' }}
+        onClick={handleSeekTouch}
+        onTouchEnd={handleSeekTouch}>
+        <div style={{ height: '100%', width: `${pct}%`, background: 'var(--color-primary)', transition: 'width 0.1s linear' }} />
       </div>
 
-      {/* Player row — perfectly centered */}
-      <div className="flex items-center w-full px-3 py-2"
-        style={{ paddingBottom: 'calc(0.5rem + env(safe-area-inset-bottom, 0px))' }}>
-
-        {/* Album art — tap to open fullscreen */}
-        <div className="relative w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 cursor-pointer mr-3"
-          onClick={toggleFullscreen}>
-          <img src={currentTrack.cover} alt=""
-            className="w-full h-full object-cover"
-            onError={e => e.target.src = 'https://placehold.co/44x44/161622/0DFFB0?text=♫'} />
+      {/* Single centered row */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        padding: '8px 12px',
+        paddingBottom: 'calc(8px + env(safe-area-inset-bottom, 0px))',
+        gap: 8,
+      }}>
+        {/* Art */}
+        <div onClick={toggleFullscreen} style={{ position: 'relative', width: 44, height: 44, borderRadius: 10, overflow: 'hidden', flexShrink: 0, cursor: 'pointer' }}>
+          <img src={currentTrack.cover} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            onError={e => e.target.src='https://placehold.co/44x44/161622/0DFFB0?text=♫'} />
           {isPlaying && (
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-              <div className="flex gap-0.5 items-end h-3">
-                {[0,1,2].map(i => <div key={i} className="waveform-bar w-0.5" style={{ animationDelay:`${i*0.15}s` }}/>)}
+            <div style={{ position:'absolute',inset:0,background:'rgba(0,0,0,0.4)',display:'flex',alignItems:'center',justifyContent:'center' }}>
+              <div style={{ display:'flex',gap:2,alignItems:'flex-end',height:12 }}>
+                {[0,1,2].map(i=><div key={i} className="waveform-bar" style={{ width:3,animationDelay:`${i*0.15}s` }}/>)}
               </div>
             </div>
           )}
         </div>
 
-        {/* Track info — fills space, tap to open fullscreen */}
-        <div className="flex-1 min-w-0 cursor-pointer" onClick={toggleFullscreen}>
-          <p className="text-sm font-semibold truncate leading-tight">{currentTrack.title}</p>
-          <p className="text-xs truncate mt-0.5" style={{ color: 'var(--color-on-surface-muted)' }}>
-            {currentTrack.artist}
-          </p>
+        {/* Title — tappable to expand */}
+        <div onClick={toggleFullscreen} style={{ flex:1, minWidth:0, cursor:'pointer' }}>
+          <p style={{ fontSize:14,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',lineHeight:1.3 }}>{currentTrack.title}</p>
+          <p style={{ fontSize:11,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',color:'var(--color-on-surface-muted)',marginTop:1 }}>{currentTrack.artist}</p>
         </div>
 
-        {/* Controls — right-aligned, equal spacing */}
-        <div className="flex items-center gap-1 flex-shrink-0 ml-2">
-          {/* Fav */}
-          <button
-            onClick={() => toggleFavorite(currentTrack)}
-            className="w-9 h-9 flex items-center justify-center rounded-full"
-            style={{ color: isFav ? '#F87171' : 'var(--color-on-surface-muted)' }}>
-            <svg className="w-5 h-5" fill={isFav ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-            </svg>
-          </button>
+        {/* Prev */}
+        <button onClick={playPrev} style={{ width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,color:'var(--color-on-surface-muted)',borderRadius:'50%',border:'none',background:'none',cursor:'pointer' }}>
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+        </button>
 
-          {/* Prev */}
-          <button onClick={playPrev} className="w-9 h-9 flex items-center justify-center rounded-full"
-            style={{ color: 'var(--color-on-surface-muted)' }}>
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/>
-            </svg>
-          </button>
+        {/* Play/Pause — center hero button */}
+        <button onClick={()=>{ onInteract?.(); togglePlay() }}
+          style={{ width:44,height:44,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,
+            background:'var(--color-primary)',color:'var(--color-surface)',border:'none',cursor:'pointer',
+            boxShadow:'0 0 16px rgba(13,255,176,0.4)' }}>
+          {isBuffering
+            ? <div style={{ width:16,height:16,border:'2px solid currentColor',borderTopColor:'transparent',borderRadius:'50%',animation:'spin 0.8s linear infinite' }}/>
+            : isPlaying
+              ? <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>
+              : <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" style={{marginLeft:2}}><path d="M8 5v14l11-7z"/></svg>
+          }
+        </button>
 
-          {/* Play / Pause — primary color, larger */}
-          <button
-            onClick={() => { onInteract?.(); togglePlay() }}
-            className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0"
-            style={{
-              background: 'var(--color-primary)',
-              color: 'var(--color-surface)',
-              boxShadow: '0 0 18px rgba(13,255,176,0.35)',
-            }}>
-            {isBuffering
-              ? <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"/>
-              : isPlaying
-                ? <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>
-                : <svg className="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            }
-          </button>
+        {/* Next */}
+        <button onClick={playNext} style={{ width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,color:'var(--color-on-surface-muted)',borderRadius:'50%',border:'none',background:'none',cursor:'pointer' }}>
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zm2-8.14L11.03 12 8 14.14V9.86zM16 6h2v12h-2z"/></svg>
+        </button>
 
-          {/* Next */}
-          <button onClick={playNext} className="w-9 h-9 flex items-center justify-center rounded-full"
-            style={{ color: 'var(--color-on-surface-muted)' }}>
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M6 18l8.5-6L6 6v12zm2-8.14L11.03 12 8 14.14V9.86zM16 6h2v12h-2z"/>
-            </svg>
-          </button>
-        </div>
+        {/* Fav */}
+        <button onClick={()=>toggleFavorite(currentTrack)}
+          style={{ width:36,height:36,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,border:'none',background:'none',cursor:'pointer',
+            color: isFav ? '#F87171' : 'var(--color-on-surface-muted)' }}>
+          <svg width="20" height="20" fill={isFav?'currentColor':'none'} stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+          </svg>
+        </button>
       </div>
-    </motion.div>
+    </div>
   )
 }

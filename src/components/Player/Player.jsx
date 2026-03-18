@@ -8,8 +8,8 @@ import { MdShuffle, MdRepeat, MdRepeatOne, MdSkipNext, MdSkipPrevious, MdEqualiz
 import { useStore } from '../../store'
 import { downloadTrack } from '../../services/api'
 import { fmt } from '../../utils/helpers'
-import Visualizer from '../Visualizer/Visualizer'
-import LyricsPanel from '../Lyrics/LyricsPanel'
+import Visualizer from '../visualizer/Visualizer'
+import LyricsPanel from '../lyrics/LyricsPanel'
 import Equalizer from '../equalizer/Equalizer'
 
 export default function Player({ seek, getAnalyserData, onInteract }) {

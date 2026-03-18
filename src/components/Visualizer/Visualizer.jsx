@@ -1,33 +1,17 @@
 import React, { useEffect, useRef } from 'react'
 
-// Hardcoded hex fallbacks per theme — Canvas API cannot parse CSS variables or color-mix()
+// Hardcoded hex colors per theme — Canvas API CANNOT use CSS variables or color-mix()
 const THEME_COLORS = {
-  dark:   { primary: '#0DFFB0', secondary: '#7B2FFF', accent: '#FF2D78' },
-  amoled: { primary: '#00FF88', secondary: '#9333EA', accent: '#F43F5E' },
-  light:  { primary: '#059669', secondary: '#6D28D9', accent: '#DC2626' },
-  ocean:  { primary: '#38BDF8', secondary: '#818CF8', accent: '#F472B6' },
-  rose:   { primary: '#FB7185', secondary: '#A855F7', accent: '#FBBF24' },
-}
-
-// Read computed CSS variable — strip whitespace, validate it's a real hex/rgb color
-const readCSSVar = (name, fallback) => {
-  try {
-    const val = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
-    // Only accept if it looks like a real color (hex, rgb, hsl)
-    if (val && (val.startsWith('#') || val.startsWith('rgb') || val.startsWith('hsl'))) {
-      return val
-    }
-  } catch {}
-  return fallback
+  dark:   { primary: '#0DFFB0', secondary: '#7B2FFF' },
+  amoled: { primary: '#00FF88', secondary: '#9333EA' },
+  light:  { primary: '#059669', secondary: '#6D28D9' },
+  ocean:  { primary: '#38BDF8', secondary: '#818CF8' },
+  rose:   { primary: '#FB7185', secondary: '#A855F7' },
 }
 
 const getColors = () => {
   const theme = document.documentElement.getAttribute('data-theme') || 'dark'
-  const defaults = THEME_COLORS[theme] || THEME_COLORS.dark
-  return {
-    primary:   readCSSVar('--color-primary',   defaults.primary),
-    secondary: readCSSVar('--color-secondary', defaults.secondary),
-  }
+  return THEME_COLORS[theme] || THEME_COLORS.dark
 }
 
 export default function Visualizer({ getAnalyserData, isPlaying, width = 300, height = 60, style = 'bars' }) {
@@ -62,15 +46,16 @@ export default function Visualizer({ getAnalyserData, isPlaying, width = 300, he
       }
 
       if (style === 'bars') {
-        const barCount = Math.min(data.length, 64)
+        const barCount = Math.min(data.length, 60)
         const barW = Math.max(2, Math.floor(width / barCount) - 1)
         let x = 0
         for (let i = 0; i < barCount; i++) {
           const bh = Math.max(2, (data[i] / 255) * height)
-          const g = ctx.createLinearGradient(x, height, x, height - bh)
-          g.addColorStop(0, secondary)
-          g.addColorStop(1, primary)
-          ctx.fillStyle = g
+          // Use hex strings directly — never CSS variables
+          const grad = ctx.createLinearGradient(x, height, x, height - bh)
+          grad.addColorStop(0, secondary)
+          grad.addColorStop(1, primary)
+          ctx.fillStyle = grad
           ctx.fillRect(x, height - bh, barW, bh)
           x += barW + 1
           if (x >= width) break
