@@ -1,0 +1,21 @@
+{
+  "name": "machi-spotify-backend",
+  "version": "2.0.0",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "compression": "^1.7.4",
+    "express-rate-limit": "^7.1.5",
+    "axios": "^1.6.7",
+    "node-cache": "^5.1.2",
+    "dotenv": "^16.4.1",
+    "yt-search": "^2.10.4",
+    "nodemon": "^3.0.3"
+  }
+}
