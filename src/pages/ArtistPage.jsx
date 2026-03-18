@@ -6,7 +6,7 @@ import { MdShuffle, MdAlbum } from 'react-icons/md'
 import { useQuery } from '@tanstack/react-query'
 import { deezerArtist, deezerArtistTracks, deezerArtistAlbums, normalizeDeezer } from '../services/api'
 import { useStore } from '../store'
-import TrackCard from '../components/ui/TrackCard'
+import TrackCard from '../components/UI/TrackCard'
 import { fmt, fmtNum } from '../utils/helpers'
 
 const Sk = () => <div className="card p-2.5"><div className="aspect-square shimmer rounded-xl mb-2"/><div className="h-3 shimmer rounded w-3/4 mb-1"/><div className="h-2.5 shimmer rounded w-1/2"/></div>
